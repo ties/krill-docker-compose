@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+  krill:
+    image: nlnetlabs/krill:v0.5.0
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - krill_data:/var/krill/data/
+      - krill_rsync:/var/krill/data/repo/rsync/
+    environment:
+      - KRILL_LOG_LEVEL=debug
+      - KRILL_FQDN=${KRILL_FQDN}
+      - KRILL_AUTH_TOKEN=${KRILL_AUTH_TOKEN}
+      - TZ=Europe/Amsterdam \
+    networks:
+      - rpki_internal
+  rsyncd:
+    image: vimagick/rsyncd
+    ports:
+      - "873:873"
+    volumes:
+      - ./rsyncd.conf:/etc/rsyncd.conf
+      - krill_rsync:/repo
+    restart: always
+
+
+volumes:
+  krill_data:
+    driver: local
+  krill_rsync:
+    driver: local
+
+networks:
+  rpki_internal:
+    driver: bridge
