@@ -12,6 +12,7 @@ services:
       - KRILL_LOG_LEVEL=debug
       - KRILL_FQDN=${KRILL_FQDN}
       - KRILL_AUTH_TOKEN=${KRILL_AUTH_TOKEN}
+      - KRILL_CLI_TOKEN=${KRILL_AUTH_TOKEN}
       - TZ=Europe/Amsterdam \
     networks:
       - rpki_internal
@@ -27,6 +28,7 @@ services:
       - KRILL_LOG_LEVEL=debug
       - KRILL_FQDN=${KRILL_FQDN}
       - KRILL_AUTH_TOKEN=${KRILL_AUTH_TOKEN}
+      - KRILL_CLI_TOKEN=${KRILL_AUTH_TOKEN}
       - TZ=Europe/Amsterdam \
     networks:
       - rpki_internal
