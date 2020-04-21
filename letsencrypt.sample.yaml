@@ -1,0 +1,5 @@
+# Move to traefik/dynamic to pick up certificates from a file
+tls:
+  certificates:
+    - certFile: "/etc/letsencrypt/live/<fill>/fullchain.pem"
+      keyFile: "/etc/letsencrypt/live/<fill>/privkey.pem"

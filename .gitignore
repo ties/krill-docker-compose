@@ -1,1 +1,4 @@
 .env
+traefik/acme.json
+krill_publish/krill.conf
+traefik/dynamic/letsencrypt.yaml

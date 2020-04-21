@@ -1,0 +1,38 @@
+checkNewVersion = true
+
+debug = false
+
+[log]
+  level = "INFO"
+
+[api]
+  dashboard = true
+  debug = true
+
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+
+  [entryPoints.web-secure]
+    address = ":443"
+
+[retry]
+
+[providers.docker]
+  watch = true
+  exposedbydefault = false
+  network = "web"
+
+[providers.file]
+  directory = "/config/dynamic"
+
+# Allow ssl mismatches when connecting to backends
+[serversTransport]
+  insecureSkipVerify = true
+
+
+[certificatesResolvers]
+  [certificatesResolvers.default.acme]
+    storage = "/config/acme.json"
+    [certificatesResolvers.default.acme.httpChallenge]
+      entryPoint = "web"
