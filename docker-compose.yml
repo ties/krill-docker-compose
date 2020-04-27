@@ -37,7 +37,7 @@ services:
       - krill_internal
       - web
     volumes:
-      - ./krill_publish/krill.conf:/var/krill/data/krill.conf
+      - ./krill_publish/krill.conf:/var/krill/data/krill.conf:ro
       - krill_publish_data:/data/
       - krill_publish_rsync:/data/repo/rsync/
     environment:
@@ -48,14 +48,14 @@ services:
       - TZ=Europe/Amsterdam \
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.krill_publish-https.redirectscheme.scheme=https"
-      - "traefik.http.routers.krill_publish-http.entrypoints=web"
-      - "traefik.http.routers.krill_publish-http.rule=Host(`${KRILL_PUBLISH_FQDN}`)"
-      - "traefik.http.routers.krill_publish-http.middlewares=krill_publish-https@docker"
-      - "traefik.http.routers.krill_publish.entrypoints=web-secure"
-      - "traefik.http.routers.krill_publish.rule=Host(`${KRILL_PUBLISH_FQDN}`)"
-      - "traefik.http.routers.krill_publish.tls=true"
-      - "traefik.http.routers.krill_publish.tls.certresolver=default"
+      - "traefik.http.middlewares.krill-publish-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.krill-publish-http.entrypoints=web"
+      - "traefik.http.routers.krill-publish-http.rule=Host(`${KRILL_PUBLISH_FQDN}`)"
+      - "traefik.http.routers.krill-publish-http.middlewares=krill-publish-https@docker"
+      - "traefik.http.routers.krill-publish.entrypoints=web-secure"
+      - "traefik.http.routers.krill-publish.rule=Host(`${KRILL_PUBLISH_FQDN}`)"
+      - "traefik.http.routers.krill-publish.tls=true"
+      - "traefik.http.routers.krill-publish.tls.certresolver=default"
       - "traefik.http.services.service0.loadbalancer.server.scheme=https"
   rsyncd:
     image: vimagick/rsyncd
@@ -82,15 +82,15 @@ services:
       - ./traefik/usersfile:/usersfile
       - ./traefik:/config
       - /etc/letsencrypt:/etc/letsencrypt:ro
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.api.rule=Host(`${TRAEFIK_API_FQDN}`)"
-      - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.routers.api.middlewares=auth"
-      - "traefik.http.middlewares.auth.digestauth.realm=monitoring"
-      - "traefik.http.middlewares.auth.digestauth.usersfile=/usersfile"
-      - "traefik.http.routers.api.tls=true"
-      - "traefik.http.routers.api.tls.certresolver=default"
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.api.rule=Host(`${TRAEFIK_API_FQDN}`)"
+    #   - "traefik.http.routers.api.service=api@internal"
+    #   - "traefik.http.routers.api.middlewares=auth"
+    #   - "traefik.http.middlewares.auth.digestauth.realm=monitoring"
+    #   - "traefik.http.middlewares.auth.digestauth.usersfile=/usersfile"
+    #   - "traefik.http.routers.api.tls=true"
+    #   - "traefik.http.routers.api.tls.certresolver=default"
 
 volumes:
   krill_data:

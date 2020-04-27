@@ -13,13 +13,14 @@ docker network create web
 Set-up - Publication server:
 ============================
 
-In the krill publication container, create the krill config file.
+In the krill publication container, create the krill config file. Make sure that
+you copy it outside the container and update `krill_publish/krill.conf` with it.
 ```
 krillc config repo \
    --token ${KRILL_AUTH_TOKEN} \
-   --data /data/ \
-   --rrdp "https://rpki.example.net/rrdp/" \
-   --rsync "rsync://rpki.example.net/repo/" > krill.conf
+   --rrdp "https://${KRILL_FQDN}/rrdp/" \
+   --rsync "rsync://${KRILL_FQDN}/repo/" \
+   --data /data/ > krill_config.conf
 ```
 
 Set-up - Publication:
