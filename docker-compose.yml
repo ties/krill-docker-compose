@@ -7,8 +7,6 @@ services:
     networks:
       - krill_internal
       - web
-    expose:
-      - 3000
     volumes:
       - krill_data:/var/krill/data/
     environment:
@@ -19,20 +17,20 @@ services:
       - TZ=Europe/Amsterdam \
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.krill-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.krill-http.redirectscheme.scheme=https"
       - "traefik.http.routers.krill-http.entrypoints=web"
       - "traefik.http.routers.krill-http.rule=Host(`${KRILL_FQDN}`)"
       - "traefik.http.routers.krill-http.middlewares=krill-https@docker"
-      - "traefik.http.routers.krill.entrypoints=web-secure"
-      - "traefik.http.routers.krill.rule=Host(`${KRILL_FQDN}`)"
-      - "traefik.http.routers.krill.tls=true"
-      - "traefik.http.routers.krill.tls.certresolver=default"
-      - "traefik.http.services.service0.loadbalancer.server.scheme=https"
+      - "traefik.http.routers.krill-https.entrypoints=web-secure"
+      - "traefik.http.routers.krill-https.rule=Host(`${KRILL_FQDN}`)"
+      - "traefik.http.routers.krill-https.tls=true"
+      - "traefik.http.routers.krill-https.tls.certresolver=default"
+      - "traefik.http.services.krill.loadbalancer.server.scheme=https"
+      - "traefik.http.middlewares.krill-http.headers.customresponseheaders.X-Instance=krill"
+      - "traefik.http.middlewares.krill-https.headers.customresponseheaders.X-Instance=krill"
   krill_publish:
     image: nlnetlabs/krill:v0.5.0
     restart: always
-    expose:
-      - 3000
     networks:
       - krill_internal
       - web
@@ -48,15 +46,20 @@ services:
       - TZ=Europe/Amsterdam \
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.krill-publish-https.redirectscheme.scheme=https"
-      - "traefik.http.routers.krill-publish-http.entrypoints=web"
-      - "traefik.http.routers.krill-publish-http.rule=Host(`${KRILL_PUBLISH_FQDN}`)"
-      - "traefik.http.routers.krill-publish-http.middlewares=krill-publish-https@docker"
-      - "traefik.http.routers.krill-publish.entrypoints=web-secure"
-      - "traefik.http.routers.krill-publish.rule=Host(`${KRILL_PUBLISH_FQDN}`)"
-      - "traefik.http.routers.krill-publish.tls=true"
-      - "traefik.http.routers.krill-publish.tls.certresolver=default"
-      - "traefik.http.services.service0.loadbalancer.server.scheme=https"
+      - "traefik.http.middlewares.krillpublish-http.redirectscheme.scheme=https"
+      # Two differing service names because otherwise requests for both
+      # virtualhosts are loadbalanced between the two containers with differing
+      # configs.
+      - "traefik.http.routers.krillpublish-http.entrypoints=web"
+      - "traefik.http.routers.krillpublish-http.rule=Host(`${KRILL_PUBLISH_FQDN}`)"
+      - "traefik.http.routers.krillpublish-http.middlewares=krillpublish-https@docker"
+      - "traefik.http.routers.krillpublish-https.entrypoints=web-secure"
+      - "traefik.http.routers.krillpublish-https.rule=Host(`${KRILL_PUBLISH_FQDN}`)"
+      - "traefik.http.routers.krillpublish-https.tls=true"
+      - "traefik.http.routers.krillpublish-https.tls.certresolver=default"
+      - "traefik.http.services.krillpublish.loadbalancer.server.scheme=https"
+      - "traefik.http.middlewares.krillpublish-http.headers.customresponseheaders.X-Instance=krillpublish"
+      - "traefik.http.middlewares.krillpublish-https.headers.customresponseheaders.X-Instance=krillpublish"
   rsyncd:
     image: vimagick/rsyncd
     ports:
