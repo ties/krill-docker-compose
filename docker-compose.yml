@@ -54,7 +54,7 @@ services:
       - "traefik.http.routers.krillpublish-http.rule=Host(`${KRILL_PUBLISH_FQDN}`)"
       - "traefik.http.routers.krillpublish-http.middlewares=krillpublish-https@docker"
       - "traefik.http.routers.krillpublish-https.entrypoints=web-secure"
-      - "traefik.http.routers.krillpublish-https.rule=Host(`${KRILL_PUBLISH_FQDN}`)"
+      - "traefik.http.routers.krillpublish-https.rule=(Host(`${KRILL_PUBLISH_FQDN}`) && (Path(`/rrdp{postfix:.*}`) || Path(`/repo{postfix:.*}`) || Path(`/rfc8181{postfix:.*}`)))"
       - "traefik.http.routers.krillpublish-https.tls=true"
       - "traefik.http.routers.krillpublish-https.tls.certresolver=default"
       - "traefik.http.services.krillpublish.loadbalancer.server.scheme=https"
